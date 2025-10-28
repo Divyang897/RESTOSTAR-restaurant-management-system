@@ -1,0 +1,69 @@
+{% load static %}
+<div id="preloader" style="
+  position: fixed;
+  inset: 0;
+  background: #fff;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+">
+
+  <!-- Flex row for image and text -->
+  <div style="display: flex; align-items: center; gap: 15px;">
+    <!-- 🛒 Animated Trolley GIF -->
+<img src="{% static 'img/ww3.png' %}" alt="Loading..." style="height: 350px; width: 360px;">
+    
+  </div>
+
+</div>
+
+<!-- Fade-out Style -->
+<style>
+@keyframes fadeIn {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+</style>
+
+<!-- Auto-hide Script -->
+<script>
+  setTimeout(function () {
+    const preloader = document.getElementById('preloader');
+    preloader.style.transition = 'opacity 0.5s ease';
+    preloader.style.opacity = '0';
+    setTimeout(() => {
+      preloader.style.display = 'none';
+    }, 500);
+  }, 500);
+</script>
+
+
+
+
+<nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+      </li>
+    
+    </ul>
+
+    <!-- Right navbar links -->
+    <ul class="navbar-nav ml-auto">
+      <!-- Navbar Search -->
+      <li class="nav-item">
+     
+      </li>
+
+      
+     <li class="nav-item">
+      <a href="{% url 'users:logout' %}" role="button" class="text-warning" title="Logout">
+          <i class="fas fa-sign-out-alt"></i>
+      </a>
+      </li>
+
+    </ul>
+  </nav>

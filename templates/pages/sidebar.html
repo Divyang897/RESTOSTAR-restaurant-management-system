@@ -1,0 +1,586 @@
+<aside class="main-sidebar sidebar-light-success elevation-4">
+    <!-- Brand Logo -->
+    <a href="" class="brand-link">
+        {% load static %}
+        <img src="{% static 'img/ww3.png' %}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3">
+        <span class="brand-text text-warning" style="font-weight: bold;">RESTOSTAR </span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <!-- Sidebar user panel --> 
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+            <div class="image">
+                <!-- <img src="{{ admin.image.url }}" class="img-circle elevation-2" alt="User Image"> -->
+            </div>
+            <div class="info">
+                <a href="#" class="d-block">{{ admin.name }}</a>
+            </div>
+        </div>
+
+        <!-- SidebarSearch Form -->
+        <div class="form-inline">
+            <div class="input-group" data-widget="sidebar-search">
+                <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
+                <div class="input-group-append">
+                    <button class="btn btn-sidebar">
+                        <i class="fas fa-search fa-fw"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                {% with request.resolver_match.url_name as current_url %}
+
+                <!-- Dashboard -->
+                <li class="nav-item">
+                    <a href="{% url 'dashboard:dashboard' %}" class="nav-link {% if current_url == 'dashboard' %}active bg-warning{% endif %}">
+                        <i class="nav-icon fas fa-home"></i>
+                        <p>Dashboard</p>
+                    </a>
+                </li>
+
+                <!-- POS Menu (Cashier & Admin) -->
+              
+                <li class="nav-item {% if current_url in 'new_sales sales_history sale_items' %}menu-open{% endif %}">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-user"></i>
+                        <p>Users<i class="fas fa-angle-left right"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'new_sales' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon" ></i>
+                                <p>Add Users</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'sales_history' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon" ></i>
+                                <p>Role Management</p>
+                            </a>
+                        </li>
+                         <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'sales_history' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon" ></i>
+                                <p>Permissions Matrix</p>
+                            </a>
+                        </li>
+                        
+                    </ul>
+                </li>
+
+                <!-- Return Menu -->
+                <li class="nav-item {% if current_url in 'returns return_items return_invoice return_history' %}menu-open{% endif %}">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-users"></i>
+                        <p>Customers<i class="fas fa-angle-left right"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'returns' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon" ></i>
+                                <p>customers</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+              
+
+                <!-- Stock Management (Stock Manager & Admin) -->
+            
+                <li class="nav-item {% if current_url in 'table_home tabless' %}menu-open{% endif %}">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-table"></i>
+                        <p>Table Booking<i class="fas fa-angle-left right"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{% url 'tables:table_home' %}" class="nav-link {% if current_url == 'table_home' %}active bg-warning{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Booking</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'tables:tabless' %}" class="nav-link {% if current_url == 'tabless' %}active bg-warning{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Table List</p>
+                            </a>
+                        </li>
+                         <!-- <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'purchase_order' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Advance Booking</p>
+                            </a>
+                        </li> -->
+                        
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'purchase_order' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Table Layout View</p>
+                            </a>
+                        </li>
+
+                        
+                    </ul>
+                </li>
+
+                <!-- Product Management -->
+                <li class="nav-item {% if current_url in 'product_add product_display' %}menu-open{% endif %}">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-calendar-check"></i>
+                        <p>Bookings<i class="fas fa-angle-left right"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'product_add' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>show Bookings</p>
+                            </a>
+                        </li>
+                        <!-- <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'product_display' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Display Product</p>
+                            </a>
+                        </li> -->
+                    </ul>
+                </li>
+
+                <!-- Category/Subcategory -->
+                <li class="nav-item {% if current_url in 'menu_home category_home today-special' %}menu-open{% endif %}">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-utensils  "></i>
+                        <p>Menu & Categories<i class="fas fa-angle-left right"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{% url 'menu:menu_home' %}" class="nav-link {% if current_url == 'menu_home' %}active bg-warning{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Menu Item</p>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{% url 'menu:today-special' %}" class="nav-link {% if current_url == 'today-special' %}active bg-warning{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Daily Specials</p>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{% url 'menu:category_home' %}" class="nav-link {% if current_url == 'category_home' %}active bg-warning{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Category</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- Supplier Management -->
+                <li class="nav-item {% if current_url in 'add_supplier pos_order' %}menu-open{% endif %}">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-shopping-cart"></i>
+                        <p>Order<i class="fas fa-angle-left right"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == '' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Order</p>
+                            </a>
+                        </li>
+                         <li class="nav-item">
+                            <a href="{% url 'order:pos_order' %}" class="nav-link {% if current_url == 'pos_order' %}active bg-warning{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Pos Order</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'invoices_list' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p> Order Status</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+    
+                
+                <li class="nav-item {% if current_url in 'add_supplier purchase_invoices profile display_supplier invoices_list' %}menu-open{% endif %}">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-fire"></i>
+                        <p>KDS<i class="fas fa-angle-left right"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'add_supplier' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Live Orders</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'invoices_list' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Chef Performance Report</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                 <li class="nav-item {% if current_url in 'add_supplier purchase_invoices profile display_supplier invoices_list' %}menu-open{% endif %}">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-cash-register"></i>
+                        <p> Billing <i class="fas fa-angle-left right"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <!-- <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'add_supplier' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>POS Interface</p>
+                            </a>
+                        </li> -->
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'invoices_list' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Payment</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'invoices_list' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Tax & Discount</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'invoices_list' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>End-of-Day</p>
+                            </a>
+                        </li>
+                        
+                        
+                    </ul>
+                </li>
+
+                <!-- Settings (All Roles) -->
+            
+                <li class="nav-item {% if current_url == 'attendance_sheet' %}menu-open{% endif %}">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-clock"></i>
+                        <p>Attendance<i class="fas fa-angle-left right"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{% url 'attendance:attendance_sheet' %}" class="nav-link {% if current_url == 'attendance_sheet' %}active bg-warning{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Daily Attendance Entry</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'profiles' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Monthly Attendance Report</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'profiles' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p> Filter by Role</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+
+                <li class="nav-item {% if current_url == 'profiles' %}menu-open{% endif %}">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-money-bill-wave"></i>
+                        <p> Payroll / Salary<i class="fas fa-angle-left right"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'profiles' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Employee Salary</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'profiles' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Generate Monthly Payrol</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'profiles' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Salary Slip Download</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+
+                <li class="nav-item {% if current_url == 'profiles' %}menu-open{% endif %}">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-calendar-alt"></i>
+                        <p>Shift Scheduling<i class="fas fa-angle-left right"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'profiles' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Shift Template</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'profiles' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Assign Shift to Employee</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'profiles' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Swap / Update Shift</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'profiles' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Shift Roster Calendar View</p>
+                            </a>
+                        </li>
+                        
+                    </ul>
+                </li>
+
+                
+                <li class="nav-item {% if current_url == 'profiles' %}menu-open{% endif %}">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-file-alt"></i>
+                        <p>Leave Management<i class="fas fa-angle-left right"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'profiles' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Apply Leave</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'profiles' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Approve / Reject Leave</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'profiles' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Leave Balance Report</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'profiles' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Integration with Payroll (auto deduct)</p>
+                            </a>
+                        </li>
+                        
+                    </ul>
+                </li>
+
+
+
+                 <li class="nav-item {% if current_url == 'profiles' %}menu-open{% endif %}">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-chart-line"></i>
+                        <p>Expenses & Profit Tracking<i class="fas fa-angle-left right"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'profiles' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Expense Category</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'profiles' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Expense Entry</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'profiles' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Profit Calculation</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'profiles' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Monthly Profit Chart</p>
+                            </a>
+                        </li>
+                        
+                    </ul>
+                </li>
+
+
+
+                <li class="nav-item {% if current_url == 'profiles' %}menu-open{% endif %}">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-boxes"></i>
+                        <p>Inventory & Stock<i class="fas fa-angle-left right"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'profiles' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Item List</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'profiles' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Stock In / Stock Out</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'profiles' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Low Stock Alerts</p>
+                            </a>
+                        </li>                        
+                    </ul>
+                </li>
+                
+
+                   <li class="nav-item {% if current_url == 'profiles' %}menu-open{% endif %}">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-industry"></i>
+                        <p>Supplier / Vendor Management<i class="fas fa-angle-left right"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'profiles' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Supplier</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'profiles' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Product</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'profiles' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Payment Terms & Purchase History</p>
+                            </a>
+                        </li>                        
+                    </ul>
+                </li>
+                
+                <li class="nav-item {% if current_url == 'profiles' %}menu-open{% endif %}">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-shopping-cart"></i>
+                        <p> Purchase Order<i class="fas fa-angle-left right"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'profiles' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>PO Creation</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'profiles' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>PO Approval Flow</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'profiles' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Payment Linking</p>
+                            </a>
+                        </li>                        
+                    </ul>
+                </li>
+               
+                
+                
+                
+                <li class="nav-item {% if current_url == 'profiles' %}menu-open{% endif %}">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-chart-line"></i>
+                        <p>reports<i class="fas fa-angle-left right"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'profiles' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Daily Sales, Weekly, Monthly</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'profiles' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Most Selling Items</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'profiles' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Profit / Loss Summary   </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'profiles' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Export (Excel, PDF)</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                 <li class="nav-item {% if current_url == 'profiles' %}menu-open{% endif %}">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-database"></i>
+                        <p> Database Backup & Export<i class="fas fa-angle-left right"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'profiles' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Manual Backup</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'profiles' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Import / Restore</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="" class="nav-link {% if current_url == 'profiles' %}active bg-success{% endif %}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Export Reports (Excel / PDF) </p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+               
+
+                {% endwith %}
+            </ul>
+        </nav>
+    </div>
+</aside>

@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="content-wrapper">
+    <!-- Page Header -->
+    <section class="content-header">
+        <div class="container-fluid d-flex justify-content-between align-items-center flex-wrap">
+            <div>
+                <h1 class="fw-bold mb-0 text-dark">Attendance Sheet</h1>
+                <p class="text-muted mb-0 small">Manage daily employee attendance</p>
+            </div>
+            <ol class="breadcrumb float-sm-right mb-0">
+                <li class="breadcrumb-item"><a href="#" class="text-success">Home</a></li>
+                <li class="breadcrumb-item active">Attendance</li>
+            </ol>
+        </div>
+        <hr>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="table-responsive" style="max-height:70vh;">
+                        <table  id="example1" class="table table-bordered table-striped text-center">
+                            <thead class="table text-center">
+                                <tr>
+                                    <th>Employee Name</th>
+                                    <th>Position</th>
+                                    <th>ID</th>
+                                    <!-- Example Dates -->
+                                    <th>2025-10-01</th>
+                                    <th>2025-10-02</th>
+                                    <th>2025-10-03</th>
+                                    <th>2025-10-04</th>
+                                    <th>2025-10-05</th>
+                                    <th>2025-10-06</th>
+                                    <th>2025-10-07</th>
+                                    <th>2025-10-08</th>
+                                    <th>2025-10-09</th>
+                                    <th>2025-10-10</th>
+                                    <th>2025-10-11</th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody class="text-center">
+                                <tr>
+                                    <td>Ahmad</td>
+                                    <td>Developer</td>
+                                    <td>1</td>
+                                    <td><input type="checkbox" class="form-check-input" checked></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                </tr>
+                                <tr>
+                                    <td>Ali</td>
+                                    <td>Designer</td>
+                                    <td>7</td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input" checked></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                </tr>
+                                <tr>
+                                    <td>Lima</td>
+                                    <td>Assistant</td>
+                                    <td>8</td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input" checked></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                </tr>
+                                <tr>
+                                    <td>Jamil</td>
+                                    <td>Assistant</td>
+                                    <td>18</td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input" checked></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                </tr>
+                                <tr>
+                                    <td>Mahmood</td>
+                                    <td>Developer</td>
+                                    <td>19</td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input" checked></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                    <td><input type="checkbox" class="form-check-input"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                      <!-- Submit -->
+    <button type="submit" class="btn btn-warning border-0 text-dark fw-semibold">
+      <i class="bi bi-check-circle me-1"></i> Submit
+    </button>
+
+                    <!-- Footer Controls -->
+                    <!-- <div class="d-flex justify-content-between align-items-center bg-warning bg-opacity-25 p-2 rounded mt-3">
+                        <div><strong>Total Employees:</strong> 5</div>
+                        <div><strong>Present Today:</strong> <span id="presentCount">0</span></div>
+                        <textarea class="form-control form-control-sm w-50" placeholder="Remarks or notes..."></textarea>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+{% endblock %}

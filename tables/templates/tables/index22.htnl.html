@@ -1,0 +1,493 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<!-- Moment.js -->
+<script src="{% static 'plugins/moment/moment.min.js' %}"></script>
+
+<!-- Tempus Dominus (Bootstrap 4 datetime picker used by AdminLTE) -->
+<link rel="stylesheet" href="{% static 'plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css' %}">
+<script src="{% static 'plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js' %}"></script>
+
+<!-- Font Awesome (for icons) -->
+<link rel="stylesheet" href="{% static 'plugins/fontawesome-free/css/all.min.css' %}">
+
+<!-- jQuery (must come before the script below) -->
+<script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+
+<div class="content-wrapper">
+  <!-- Page Header -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Select Table</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="#" class="text-success">Home</a></li>
+            <li class="breadcrumb-item active">Table Reservation</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      
+      <!-- Card 1: Search / Filter -->
+      <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-warning text-white">
+          <h5 class="mb-0">Search Reservation Availability</h5>
+        </div>
+        <div class="card-body text-center">
+          <form id="reservation-form" class="my-3">
+            <div class="form-row d-flex justify-content-center align-items-center flex-wrap">
+
+              <!-- Date & Time Picker -->
+              <div class="form-group mx-2">
+                <label for="datetime">Date & Time:</label>
+                <div class="input-group date" id="datetimepicker" data-target-input="nearest">
+                  <input type="text" id="datetime" class="form-control datetimepicker-input" data-target="#datetimepicker" required/>
+                  <div class="input-group-append" data-target="#datetimepicker" data-toggle="datetimepicker">
+                    <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group mx-2 mt-4">
+                <button type="button" class="btn btn-danger" onclick="checkAvailability()">Check Availability</button>
+              </div>
+
+            </div>
+          </form>
+
+        </div>
+        <div class="card-body text-center">
+          <p class="mt-2 text-muted">Click one or more tables to book them.</p>
+                      <!-- Table layout -->
+            <div id="table-layout" class="d-flex flex-wrap justify-content-center align-items-center mt-4">
+                {% for table in tables %}
+                <div
+    class="table-area {% if not table.is_available %}booked{% endif %}"
+    id="table{{ table.id }}"
+    onclick="toggleTable('{{ table.id }}')"
+    style="position: relative; margin: 10px; width: 80px; height: 80px;"
+    data-booking-info="{% if not table.is_available %}Name: {{ table.booking.customer_name }} | Persons: {{ table.booking.total_persons }} | Time: {{ table.booking.time|time:'H:i' }}{% endif %}"
+  >
+    
+    {% if not table.is_available %}
+      <div class="table-area" id="table{{ table.number }}" onclick="toggleTable('{{ table.id }}')">
+    <div class="tooltiptext"></div>
+  </div>
+    {% endif %}
+
+                  
+                  {% if table.capacity == 4 %}
+                    <!-- 4 chairs: 2 upper, 2 bottom -->
+                    <div style="position:absolute;width:15px;height:15px;background:#adb5bd;border-radius:4px;top:-10px;left:30%;transform:translateX(-50%);"></div>
+                    <div style="position:absolute;width:15px;height:15px;background:#adb5bd;border-radius:4px;top:-10px;left:70%;transform:translateX(-50%);"></div>
+                    <div style="position:absolute;width:15px;height:15px;background:#adb5bd;border-radius:4px;bottom:-10px;left:30%;transform:translateX(-50%);"></div>
+                    <div style="position:absolute;width:15px;height:15px;background:#adb5bd;border-radius:4px;bottom:-10px;left:70%;transform:translateX(-50%);"></div>
+                  
+                  {% elif table.capacity == 6 %}
+                    <!-- 6 chairs: 2 upper, 2 bottom, 1 left, 1 right -->
+                    <div style="position:absolute;width:15px;height:15px;background:#adb5bd;border-radius:4px;top:-7px;left:30%;transform:translateX(-50%);"></div>
+                    <div style="position:absolute;width:15px;height:15px;background:#adb5bd;border-radius:4px;top:-7px;left:70%;transform:translateX(-50%);"></div>
+                    <div style="position:absolute;width:15px;height:15px;background:#adb5bd;border-radius:4px;bottom:-7px;left:30%;transform:translateX(-50%);"></div>
+                    <div style="position:absolute;width:15px;height:15px;background:#adb5bd;border-radius:4px;bottom:-7px;left:70%;transform:translateX(-50%);"></div>
+                    <div style="position:absolute;width:15px;height:15px;background:#adb5bd;border-radius:4px;left:-15px;top:50%;transform:translateY(-50%);"></div>
+                    <div style="position:absolute;width:15px;height:15px;background:#adb5bd;border-radius:4px;right:-15px;top:50%;transform:translateY(-50%);"></div>
+                  
+                  {% elif table.capacity == 8 %}
+                    <!-- 8 chairs: 3 upper, 3 bottom, 1 left, 1 right -->
+                    <div style="position:absolute;width:15px;height:15px;background:#adb5bd;border-radius:4px;top:-7px;left:20%;transform:translateX(-50%);"></div>
+                    <div style="position:absolute;width:15px;height:15px;background:#adb5bd;border-radius:4px;top:-7px;left:50%;transform:translateX(-50%);"></div>
+                    <div style="position:absolute;width:15px;height:15px;background:#adb5bd;border-radius:4px;top:-7px;left:80%;transform:translateX(-50%);"></div>
+                    <div style="position:absolute;width:15px;height:15px;background:#adb5bd;border-radius:4px;bottom:-7px;left:20%;transform:translateX(-50%);"></div>
+                    <div style="position:absolute;width:15px;height:15px;background:#adb5bd;border-radius:4px;bottom:-7px;left:50%;transform:translateX(-50%);"></div>
+                    <div style="position:absolute;width:15px;height:15px;background:#adb5bd;border-radius:4px;bottom:-7px;left:80%;transform:translateX(-50%);"></div>
+                    <div style="position:absolute;width:15px;height:15px;background:#adb5bd;border-radius:4px;left:-15px;top:50%;transform:translateY(-50%);"></div>
+                    <div style="position:absolute;width:15px;height:15px;background:#adb5bd;border-radius:4px;right:-15px;top:50%;transform:translateY(-50%);"></div>
+                  
+                  {% elif table.capacity == 10 %}
+                    <!-- 10 chairs: 4 upper, 4 bottom, 1 left, 1 right -->
+                    <div style="position:absolute;width:15px;height:15px;background:#adb5bd;border-radius:4px;top:-7px;left:10%;transform:translateX(-50%);"></div>
+                    <div style="position:absolute;width:15px;height:15px;background:#adb5bd;border-radius:4px;top:-7px;left:35%;transform:translateX(-50%);"></div>
+                    <div style="position:absolute;width:15px;height:15px;background:#adb5bd;border-radius:4px;top:-7px;left:65%;transform:translateX(-50%);"></div>
+                    <div style="position:absolute;width:15px;height:15px;background:#adb5bd;border-radius:4px;top:-7px;left:90%;transform:translateX(-50%);"></div>
+                    <div style="position:absolute;width:15px;height:15px;background:#adb5bd;border-radius:4px;bottom:-7px;left:10%;transform:translateX(-50%);"></div>
+                    <div style="position:absolute;width:15px;height:15px;background:#adb5bd;border-radius:4px;bottom:-7px;left:35%;transform:translateX(-50%);"></div>
+                    <div style="position:absolute;width:15px;height:15px;background:#adb5bd;border-radius:4px;bottom:-7px;left:65%;transform:translateX(-50%);"></div>
+                    <div style="position:absolute;width:15px;height:15px;background:#adb5bd;border-radius:4px;bottom:-7px;left:90%;transform:translateX(-50%);"></div>
+                    <div style="position:absolute;width:15px;height:15px;background:#adb5bd;border-radius:4px;left:-15px;top:50%;transform:translateY(-50%);"></div>
+                    <div style="position:absolute;width:15px;height:15px;background:#adb5bd;border-radius:4px;right:-15px;top:50%;transform:translateY(-50%);"></div>
+                  {% endif %}
+
+                  <div class="table-center">T{{ table.number }}</div>
+                </div>
+              {% endfor %}
+            </div>
+          <div class="mt-4 d-flex justify-content-between align-items-center">
+            <p id="selected-table" class="text-info"></p>
+              <button id="confirm-btn" class="btn btn-danger" disabled data-toggle="modal" data-target="#customerModal">Confirm Reservation</button>
+          </div>
+        </div>
+      </div>
+
+
+   <!-- Customer Details Modal -->
+<div class="modal fade" id="customerModal" tabindex="-1" role="dialog" aria-labelledby="customerModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-warning text-white">
+        <h5 class="modal-title" id="customerModalLabel">Customer Details</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="customer-form">
+          <div class="form-group">
+            <label for="customer-name">Name</label>
+            <input type="text" class="form-control" id="customer-name" placeholder="Enter your full name" required>
+          </div>
+          <div class="form-group">
+            <label for="total-persons">Total Persons</label>
+            <input type="number" class="form-control" id="total-persons" min="1" placeholder="Number of persons" required>
+          </div>
+          <div class="form-group">
+            <label for="contact-number">Contact Number</label>
+            <input type="text" class="form-control" id="contact-number" placeholder="Enter contact number" required>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger" onclick="submitReservation()">Submit Reservation</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+    </div>
+
+    
+  </section>
+</div>
+
+<!-- Styles -->
+<style>
+  #table-layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 95px;
+    justify-items: center;
+    margin: 0 auto;
+    max-width: 1000px;
+  }
+
+  .table-area {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  /* Normal available table */
+  .table-area .table-center {
+    width: 70px;
+    height: 50px;
+    background-color: #ffffff; /* white for available */
+    border: 2px solid #ccc;
+    border-radius: 5%;
+    line-height: 50px;
+    text-align: center;
+    font-weight: bold;
+    color: #333;
+    transition: 0.3s;
+  }
+
+  
+
+  /* Hover effect */
+  .table-area:hover .table-center {
+    background-color: #f1f1f1;
+  }
+
+  /* Selected table */
+  .table-area.selected .table-center {
+    background-color: #1d3557;
+    color: white;
+    border-color: #1d3557;
+  }
+
+  /* Booked table */
+.table-area.booked .table-center {
+  background-color: #343a40; /* dark gray for booked */
+  color: #fff;
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+/* Tooltip styling */
+.table-area.booked {
+  position: relative;
+}
+
+.table-area.booked .tooltiptext {
+  visibility: hidden;
+  width: 200px;
+  background-color: #212529;
+  color: #fff;  
+  text-align: left;
+  border-radius: 6px;
+  padding: 8px;
+  position: absolute;
+  z-index: 10;
+  bottom: 110%; /* tooltip will appear above the table */
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  line-height: 1.4;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  white-space: normal;
+}
+
+/* Hover par tooltip show hoga */
+.table-area.booked:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Booked tables have darker chairs */
+.table-area.booked .chair {
+  background-color: #6c757d;
+}
+
+
+</style>
+<script>
+
+   document.addEventListener('DOMContentLoaded', () => {
+    // Fetch today's bookings and mark booked tables
+    fetch("{% url 'tables:today_bookings' %}")
+
+    .then(res => res.json())
+    .then(data => {
+        if (data.booked_tables) {
+            document.querySelectorAll('.table-area').forEach(div => {
+                const num = div.querySelector('.table-center').innerText.replace('T', '');
+                const bookedInfo = data.booked_tables.find(t => t.table_number === num);
+
+                if (bookedInfo) {
+                    div.classList.add('booked');
+
+                    // Tooltip create/update
+                    let tooltip = div.querySelector('.tooltiptext');
+                    if (!tooltip) {
+                        tooltip = document.createElement('span');
+                        tooltip.className = 'tooltiptext';
+                        div.appendChild(tooltip);
+                    }
+                    tooltip.innerHTML = `
+                        <strong>${bookedInfo.customer_name}</strong><br>
+                        Persons: ${bookedInfo.total_persons}<br>
+                        Contact: ${bookedInfo.contact_number}<br>
+                        Time: ${bookedInfo.start_time} - ${bookedInfo.end_time}
+                    `;
+                } else {
+                    div.classList.remove('booked');
+                    const tooltip = div.querySelector('.tooltiptext');
+                    if (tooltip) tooltip.remove();
+                }
+            });
+        }
+    })
+    .catch(err => console.error(err));
+});
+
+// Check availability for selected date/time
+function checkAvailability() {
+    const datetime = document.getElementById('datetime').value;
+    if (!datetime) return alert("Please select date & time");
+
+    const [datePart, timePart] = datetime.split(' ');
+
+    fetch(`/booking/check/?date=${datePart}&time=${timePart}`)
+    .then(res => res.json())
+    .then(data => {
+        document.querySelectorAll('.table-area').forEach(div => {
+            const num = div.querySelector('.table-center').innerText.replace('T', '');
+            const bookedInfo = data.booked_tables.find(t => t.table_number === num);
+
+            if (bookedInfo) {
+                div.classList.add('booked');
+                div.classList.remove('selected');
+
+                let tooltip = div.querySelector('.tooltiptext');
+                if (!tooltip) {
+                    tooltip = document.createElement('span');
+                    tooltip.className = 'tooltiptext';
+                    div.appendChild(tooltip);
+                }
+                tooltip.innerHTML = `
+                    <strong>${bookedInfo.customer_name}</strong><br>
+                    Persons: ${bookedInfo.total_persons}<br>
+                    Contact: ${bookedInfo.contact_number}<br>
+                    Time: ${bookedInfo.start_time} - ${bookedInfo.end_time}
+                `;
+            } else {
+                div.classList.remove('booked');
+                const tooltip = div.querySelector('.tooltiptext');
+                if (tooltip) tooltip.remove();
+            }
+        });
+    })
+    .catch(err => console.error(err));
+}
+
+document.querySelectorAll('.table-area.booked').forEach(div => {
+  const info = div.getAttribute('data-booking-info');
+  if (info) {
+    const tooltip = div.querySelector('.tooltiptext');
+    if (tooltip) tooltip.innerText = info;
+  }
+}); 
+
+function submitReservation() {
+  const name = document.getElementById('customer-name').value;
+  const persons = document.getElementById('total-persons').value;
+  const contact = document.getElementById('contact-number').value;
+  const datetime = document.getElementById('datetime').value;
+
+  if (!name || !persons || !contact || !datetime || selectedTables.length === 0) {
+    alert('Please fill all fields and select tables.');
+    return;
+  }
+
+  const [datePart, timePart] = datetime.split(' ');
+  const payload = {
+    customer_name: name,
+    total_persons: persons,
+    contact_number: contact,
+    tables: selectedTables,
+    date: datePart,
+    time: timePart,
+  };
+
+  fetch('/tables/submit/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': getCookie('csrftoken'),
+    },
+    body: JSON.stringify(payload)
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      alert(data.message);
+      location.reload(); // refresh to show booked tables
+    } else {
+      alert(data.error || 'Something went wrong');
+    }
+  })
+  .catch(err => console.error(err));
+}
+
+// Helper: Get CSRF token
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+</script>
+
+<!-- JavaScript -->
+<script>
+  let selectedTables = [];
+
+  function toggleTable(id) {
+    const table = document.getElementById('table' + id);
+    if (table.classList.contains('booked')) return;
+
+    if (table.classList.contains('selected')) {
+      // Deselect
+      table.classList.remove('selected');
+      selectedTables = selectedTables.filter(t => t !== id);
+    } else {
+      // Select
+      table.classList.add('selected');
+      selectedTables.push(id);
+    }
+
+    // Update info text
+    const info = document.getElementById('selected-table');
+    if (selectedTables.length > 0) {
+      info.innerText = `Selected Table(s): ${selectedTables.join(', ')}`;
+      document.getElementById('confirm-btn').disabled = false;
+    } else {
+      info.innerText = '';
+      document.getElementById('confirm-btn').disabled = true;
+    }
+  }
+
+ 
+
+
+    $(function () {
+  // Initialize datetimepicker with current date & time by default
+  $('#datetimepicker').datetimepicker({
+    format: 'YYYY-MM-DD HH:mm', // Shows both date & time
+    defaultDate: moment(),       // <-- sets current date & time
+    icons: {
+      time: 'far fa-clock',
+      date: 'far fa-calendar-alt',
+      up: 'fas fa-arrow-up',
+      down: 'fas fa-arrow-down'
+    }
+  });
+});
+
+
+function toggleTable(id) {
+  const table = document.getElementById('table' + id);
+  if (table.classList.contains('booked')) return;
+
+  if (table.classList.contains('selected')) {
+    table.classList.remove('selected');
+    selectedTables = selectedTables.filter(t => t !== id);
+  } else {
+    table.classList.add('selected');
+    selectedTables.push(id);
+  }
+
+  const info = document.getElementById('selected-table');
+  if (selectedTables.length > 0) {
+    info.innerText = `Selected Table(s): ${selectedTables.join(', ')}`;
+    document.getElementById('confirm-btn').disabled = false;
+  } else {
+    info.innerText = '';
+    document.getElementById('confirm-btn').disabled = true;
+  }
+} 
+
+</script>
+{% endblock %}

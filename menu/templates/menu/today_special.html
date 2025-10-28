@@ -1,0 +1,351 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+
+
+ <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>Today Specials</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="#">Home</a></li>
+              <li class="breadcrumb-item active">Calendar</li>
+            </ol>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-3">
+            <div class="sticky-top mb-3">
+
+           <div class="card">
+  <div class="card-header bg-warning">
+    <h4 class="card-title">Today Specials</h4>
+  </div>
+  <div class="card-body">
+    <!-- the events -->
+    <div id="external-events">
+      {% for special in today_specials %}
+        <div class="external-event bg-danger d-flex justify-content-between align-items-center mb-2 p-2 rounded" data-id="{{ special.id }}">
+          <div>
+            <strong>{{ special.name }}</strong><br>
+            <small>
+              {% for item in special.items.all %}
+                {{ item.name }}{% if not forloop.last %}, {% endif %}
+              {% endfor %}
+            </small>
+          </div>
+
+          <!-- delete icon -->
+       {% url "menu:delete_special" special.id as delete_url %}
+        <button onclick="deleteSpecial('{{ special.id }}', '{{ delete_url }}')">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+
+        </div>
+      {% endfor %}
+
+      <!-- <div class="checkbox mt-2">
+        <label for="drop-remove">
+          <input type="checkbox" id="drop-remove">
+          remove after drop
+        </label>
+      </div> -->
+    </div>
+  </div>
+  <!-- /.card-body -->
+</div>
+
+
+
+              <!-- /.card -->
+  <div class="card shadow-sm border-0">
+  <div class="card-header bg-warning text-dark">
+    <h4 class="mb-0">Create Menu</h4>
+  </div>
+  <div class="card-body">
+
+    <!-- Search bar -->
+    <div class="input-group mb-3">
+      <input id="menuSearch" type="text" class="form-control" placeholder="Search Menu">
+    </div>
+
+    <!-- Menu items container -->
+    <div class="row g-2 mb-3" id="menuContainer" style="max-height: 300px; overflow-y: auto;">
+      {% for item in items %}
+      <div class="col-6 col-md-4">
+        <div class="card menu-item h-60 text-center p-2 shadow-sm border-0" style="cursor:pointer;" data-id="{{ item.id }}" data-price="{{ item.price }}">
+          {% if item.image %}
+          <img src="{{ item.image.url }}" class="card-img-top rounded" style="height: 80px; object-fit: cover;">
+          {% endif %}
+          <div class="card-body p-2">
+            <h6 class="card-title mb-1">{{ item.name }}</h6>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Selected items -->
+    <h5 class="mt-3 mb-2">Selected Items</h5>
+    <ul id="selectedItemsList" class="list-group mb-3 shadow-sm"></ul>
+
+    <!-- Total -->
+    <div class="d-flex justify-content-between align-items-center mb-3 p-2 border rounded shadow-sm bg-light">
+      <strong>Total:</strong>
+      <span id="totalPrice">0</span>
+    </div>
+
+    <!-- Save button -->
+    <button class="btn btn-warning w-100 fw-bold" data-toggle="modal" data-target="#addMenuModal" >Save Today Special</button>
+  </div>
+</div>
+
+
+<style>
+/* Hover & selection effects */
+.menu-item {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border 0.2s ease-in-out;
+}
+.menu-item.selected {
+    border: 2px solid #ffc107; /* highlight border */
+    background-color: #fff8e1;  /* light warning bg */
+}
+#selectedItemsList li {
+    transition: background 0.2s;
+}
+#selectedItemsList li:hover {
+    background-color: #fff3cd;
+}
+</style>
+
+<script>
+const selected = {}; // {itemId: {name, price}}
+const listEl = document.getElementById('selectedItemsList');
+const totalEl = document.getElementById('totalPrice');
+
+// Update Selected Items List
+function updateList() {
+    listEl.innerHTML = '';
+    let total = 0;
+
+    for (const id in selected) {
+        const item = selected[id];
+        total += parseFloat(item.price);
+
+        const li = document.createElement('li');
+        li.className = 'list-group-item d-flex justify-content-between align-items-center';
+        li.innerHTML = `
+            <span>${item.name} - </span>
+            <input type="number" value="${item.price}" class="price-input" data-id="${id}" style="width:70px; margin-right:10px">
+            <button class="btn btn-sm btn-danger remove-item" data-id="${id}">X</button>
+        `;
+        listEl.appendChild(li);
+    }
+
+    totalEl.textContent = total.toFixed(2);
+
+    // Price change listener
+    document.querySelectorAll('.price-input').forEach(inp => {
+        inp.addEventListener('input', function(){
+            const id = this.dataset.id;
+            selected[id].price = this.value;
+            updateList();
+        });
+    });
+
+    // Remove button listener
+    document.querySelectorAll('.remove-item').forEach(btn => {
+        btn.addEventListener('click', function(){
+            const id = this.dataset.id;
+            delete selected[id];
+            document.querySelector(`.menu-item[data-id="${id}"]`).classList.remove('selected');
+            updateList();
+        });
+    });
+}
+
+// Toggle menu item selection
+document.querySelectorAll('.menu-item').forEach(card => {
+    card.addEventListener('click', function(){
+        const id = this.dataset.id;
+        const name = this.querySelector('.card-title').textContent;
+        const price = this.dataset.price;
+        if(selected[id]) {
+            delete selected[id];
+            this.classList.remove('selected');
+        } else {
+            selected[id] = {name, price};
+            this.classList.add('selected');
+        }
+        updateList();
+    });
+});
+
+// Save to backend
+document.getElementById('saveSpecials').addEventListener('click', function(){
+    const items = Object.keys(selected);
+    const prices = Object.values(selected).map(i=>i.price);
+    fetch("{% url 'menu:save_today_special' %}", {
+        method: 'POST',
+        headers: {'X-CSRFToken':'{{ csrf_token }}','Content-Type':'application/x-www-form-urlencoded'},
+        body: new URLSearchParams({
+            'items[]': items,
+            'prices[]': prices
+        })
+    }).then(res=>res.json()).then(data=>{
+        if(data.status=='success') {
+           location.reload();
+            alert('Today Specials Saved!');
+            // Reset selection
+            document.querySelectorAll('.menu-item.selected').forEach(el => el.classList.remove('selected'));
+            Object.keys(selected).forEach(k => delete selected[k]);
+            updateList();
+        }
+    });
+});
+
+// Optional: filter/search menu items
+document.getElementById('menuSearch').addEventListener('input', function() {
+    const query = this.value.toLowerCase();
+    document.querySelectorAll('.menu-item').forEach(card => {
+        const name = card.querySelector('.card-title').textContent.toLowerCase();
+        card.parentElement.style.display = name.includes(query) ? 'block' : 'none';
+    });
+});
+</script>
+
+
+
+
+            </div>
+          </div>
+          <!-- /.col -->
+            <div class="col-md-9">
+              <div class="card card-primary">
+                <div class="card-body p-0">
+                  <!-- THE CALENDAR -->
+                  <div id="calendar"></div>
+                
+                </div>
+                <!-- /.card-body -->
+              </div>
+              <!-- /.card -->
+            </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <div class="modal fade" id="addMenuModal" tabindex="-1" role="dialog" aria-labelledby="addMenuModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-warning text-white">
+        <h5 class="modal-title" id="addMenuModalLabel">planing of menu</h5>
+        <button type="button" class="close text-dark" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="addMenuForm" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="special-name" class="form-label">Special Name</label>
+            <input type="text" id="special-name" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="special-start" class="form-label">Start Date</label>
+            <input type="date" id="special-start" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="special-end" class="form-label">End Date</label>
+            <input type="date" id="special-end" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Items</label>
+            <ul id="special-items-list">
+              <!-- JS will populate selected items here -->
+            </ul>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-warning" id="saveMenuBtn">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <script>
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+const csrftoken = getCookie('csrftoken');
+</script>
+
+<!-- AJAX Delete -->
+<script>
+function deleteSpecial(id, url) {
+  if (!confirm("Are you sure you want to delete this special?")) return;
+
+  fetch(url, {
+    method: 'POST',
+    headers: {
+      'X-CSRFToken': csrftoken,
+      'Content-Type': 'application/json',
+    },
+  })
+  .then(response => {
+    if (!response.ok) throw new Error('Network response was not OK');
+    return response.json();
+  })
+  .then(data => {
+    if (data.success) {
+       location.reload();
+      const element = document.getElementById(`special-${id}`);
+      if (element) {
+        element.style.transition = "opacity 0.5s, height 0.5s, margin 0.5s, padding 0.5s";
+        element.style.opacity = 0;
+        element.style.height = 0;
+        element.style.margin = 0;
+        element.style.padding = 0;
+        setTimeout(() => element.remove(), 500);
+        
+      }
+    } else {
+      alert('Error deleting special: ' + (data.error || 'Unknown error'));
+    }
+  })
+  .catch(error => {
+    console.error('Delete request failed:', error);
+    alert('Request failed. Please try again.');
+  });
+}
+
+</script>
+{% endblock %}

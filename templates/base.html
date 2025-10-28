@@ -1,0 +1,25 @@
+
+{% include "pages/head.html" %}
+<body class="hold-transition sidebar-mini layout-fixed  layout-navbar-fixed">
+<div class="wrapper">
+
+  <!-- Preloader -->
+
+  <!-- Navbar -->
+  {% include "pages/navbar.html" %}
+  <!-- /.navbar -->
+
+  <!-- Main Sidebar Container -->
+{% include "pages/sidebar.html" %}
+
+  <!-- Content Wrapper. Contains page content -->
+{% block content %}
+<!-- Page-specific content goes here -->
+{% endblock %}
+  <!-- /.content-wrapper -->
+ 
+<!-- ./wrapper -->
+{% include "pages/script.html" %}
+
+</body>
+</html>

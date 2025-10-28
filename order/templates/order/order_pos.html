@@ -1,0 +1,399 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+#leftList .product-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+</style>
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>Order</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="" class="text-warning">Home</a></li>
+              <li class="breadcrumb-item active">Sales</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-9">
+            <div class="card card-warning">
+              <div class="card-header">
+                <h3 class="card-title">POS</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body"  >
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search...">
+
+                <div class="row mt-4 g-0" id="leftList" style="max-height: 390px; overflow-y: auto;">
+                    
+                    {% for x in menu_items %}
+                    
+                 <div class="col-sm-2" id="contentToSearch">
+                <div class="position-relative p-3 product-card mb-4 item"
+                    data-id="{{ x.id }}"
+                    style="max-width: 18rem; cursor: pointer; border: 1px solid black; border-radius: 5px;height: 180px;overflow: hidden; ">
+
+                    <div class="ribbon-wrapper">
+                    <div class="ribbon bg-warning">
+                        ₹{{ x.price }}
+                    </div>
+                    </div>
+
+                    <img src="{{ x.image.url }}" class="img-fluid mb-2"
+                        style="height:80px; width:80px;" />
+                    <small class="names">{{ x.name }}</small>
+                </div>
+                </div>
+
+                  {% endfor %}
+
+                </div>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col -->
+           <div class="col-3">
+            <div class="card card-warning">
+              
+                
+              
+           <div class="card-header d-flex justify-content-between align-items-center">
+            <h3 class="card-title mb-0">Cart</h3>
+          </div>
+
+          
+
+            <div class="card-body d-flex flex-column" style="height:490px;">
+            
+            <h5>Order No: <span id="orderNumberDisplay"></span></h5>
+
+              <div id="rightList" class="flex-grow-1 overflow-auto border-top">
+                  <!-- yaha cart items append honge -->
+              </div>
+
+              <div class="pt-2 border-top">
+                  <div class="d-flex justify-content-between">
+                      <strong>Total:</strong>
+                      <span id="cartTotal">₹0.00</span>
+                  </div>
+          
+                  <div class="mt-3 d-grid gap-2">
+                      <button class="btn btn-warning" onclick="submitOrder('Cash')">Cash</button>
+                      <button class="btn btn-danger" onclick="submitOrder('Online')">Online</button>
+                  </div>
+              </div>
+          </div>
+
+            <!-- /.card -->
+          </div>
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+  <script>
+document.addEventListener('DOMContentLoaded', function () {
+    const leftList = document.getElementById('leftList');
+    const rightList = document.getElementById('rightList');
+
+    // Product click
+    document.body.addEventListener('click', function (e) {
+        if (e.target.closest('.product-card')) {
+            const block = e.target.closest('.col-sm-2');
+            const productName = block.querySelector('.names').innerText;
+            const priceTxt = block.querySelector('.ribbon').innerText; // eg: ₹120
+            const basePrice = parseFloat(priceTxt.replace(/[^\d.]/g, ''));
+
+            // Check if product already in cart
+            let existingRow = Array.from(document.querySelectorAll('#rightList .cart-item'))
+                .find(item => item.querySelector('.item-name').innerText === productName);
+
+            if (existingRow) {
+                // Increment quantity
+                let qtyInput = existingRow.querySelector('.qty-input');
+                qtyInput.value = parseInt(qtyInput.value) + 1;
+
+                // Update price for this row
+                let newPrice = basePrice * parseInt(qtyInput.value);
+                existingRow.querySelector('.price').innerText = "₹" + newPrice.toFixed(2);
+
+                updateCartTotal();
+                saveCartToLocalStorage();
+                return;
+            }
+
+            // If not in cart, create new row
+            const row = document.createElement('div');
+            row.className = 'd-flex justify-content-between align-items-start mb-3 cart-item';
+            row.dataset.price = basePrice; // save base price
+
+            row.innerHTML = `
+            
+                <div style="width: 60%;">
+                    <strong class="item-name">${productName}</strong><br>
+                    <small class="text-muted">Medium</small>
+                </div>
+                <div style="width: 40%;">
+                    <div class="d-flex">
+                        <button class="btn btn-outline-secondary minus-btn">-</button>
+                        <input type="text" class="form-control text-center qty-input" value="1" min="1" readonly>
+                        <button class="btn btn-outline-secondary plus-btn">+</button>
+                    </div>
+                    <div class="d-flex justify-content-between mt-1">
+                        <span class="price">₹${basePrice.toFixed(2)}</span>
+                        <button class="btn btn-sm btn-warning remove-item">&times;</button>
+                    </div>
+                </div>
+          
+            `;
+            rightList.appendChild(row);
+            updateCartTotal();
+            saveCartToLocalStorage();
+        }
+    });
+
+    // Handle +, -, remove
+    rightList.addEventListener('click', function (e) {
+        const row = e.target.closest('.cart-item');
+        if (!row) return;
+
+        const qtyInput = row.querySelector('.qty-input');
+        const basePrice = parseFloat(row.dataset.price);
+
+        // plus
+        if (e.target.classList.contains('plus-btn')) {
+            qtyInput.value = parseInt(qtyInput.value) + 1;
+        }
+
+        // minus
+        if (e.target.classList.contains('minus-btn')) {
+            qtyInput.value = Math.max(1, parseInt(qtyInput.value) - 1);
+        }
+
+        // remove
+        if (e.target.classList.contains('remove-item')) {
+            row.remove();
+            updateCartTotal();
+            saveCartToLocalStorage();
+            return;
+        }
+
+        // Update price for this row
+        const newPrice = parseInt(qtyInput.value) * basePrice;
+        row.querySelector('.price').innerText = "₹" + newPrice.toFixed(2);
+
+        updateCartTotal();
+        saveCartToLocalStorage();
+    });
+
+    // Renew button
+    document.addEventListener('click', function (e) {
+        if (e.target.classList.contains('Renew')) {
+            rightList.innerHTML = ``;
+            updateCartTotal();
+            generateShortOrderNumber();
+        }
+    });
+});
+
+// Total calculation
+function updateCartTotal() {
+    let sum = 0;
+    document.querySelectorAll('#rightList .cart-item').forEach(function (row) {
+        const price = parseFloat(row.querySelector('.price').innerText.replace(/[^\d.]/g, ''));
+        sum += price;
+    });
+    document.getElementById('cartTotal').innerText = "₹" + sum.toFixed(2);
+}
+
+
+
+function saveCartToLocalStorage() {
+  const cart = {};
+  document.querySelectorAll('#rightList .cart-item').forEach(function (row) {
+    const name = row.querySelector('.item-name').innerText;
+    const qty = parseInt(row.querySelector('.qty-input').value);
+    const unitPrice = parseFloat(row.dataset.price);
+
+    cart[name] = {
+      qty: qty, 
+      price: unitPrice
+    };
+  });
+
+  localStorage.setItem('cart', JSON.stringify(cart));
+}
+
+
+ document.getElementById('searchInput').addEventListener('keyup', function () {
+  const searchTerm = this.value.toLowerCase();
+  const leftList = document.getElementById('leftList');
+  const blocks = Array.from(leftList.querySelectorAll('.col-sm-2'));
+
+  blocks.forEach(function (block) {
+    const card = block.querySelector('.product-card');
+    const text = card.textContent.toLowerCase();
+
+    if (searchTerm === "") {
+      // search clear → show all
+      block.style.display = '';
+    }
+    else if (text.includes(searchTerm)) {
+      // match → show & move to first
+      block.style.display = '';
+      leftList.prepend(block);
+    }
+    else {
+      block.style.display = 'none';
+    }
+  });
+});
+
+
+
+
+let generatedOrderNumber = "";
+function generateShortOrderNumber() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let code = '';
+  for (let i = 0; i < 4; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return code;
+}
+
+function submitOrder(paymentMode) {
+  const cart = JSON.parse(localStorage.getItem('cart') || '{}');
+  const cartItems = Object.entries(cart).map(([key, value]) => ({
+    name: key,
+    qty: value.qty,
+    price: value.price
+  }));
+
+  if (cartItems.length === 0) {
+    alert("🛒 Cart is empty!");
+    return;
+  }
+
+  const totalAmount = cartItems.reduce((sum, item) => sum + item.qty * item.price, 0);
+  const orderNumber = generateShortOrderNumber();
+
+  if (paymentMode === "Online") {
+    // Razorpay payment
+    const options = {
+      key: "rzp_test_AIM2P2dOBQKJdb", // Replace with your Razorpay Test Key
+      amount: totalAmount * 100, // in paise
+      currency: "INR",
+      name: "KiranaKart",
+      description: "POS Order Payment",
+      image: "https://yourwebsite.com/logo.png", // optional
+      handler: function (response) {
+        // warning callback from Razorpay
+        // Now send to Django
+       fetch("", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-CSRFToken": "{{ csrf_token }}"
+          },
+          body: new URLSearchParams({
+            cart: JSON.stringify(cartItems),
+            payment_mode: paymentMode,
+            order_number: orderNumber,
+            total_amount: totalAmount.toFixed(2),
+            razorpay_payment_id: response.razorpay_payment_id
+          })
+        })
+        .then(res => res.json())
+      .then(data => {
+    if (data.status === "warning") {
+        alert("✅ Order Placed! Order No: " + data.order_number);
+        // Redirect to sale_items page
+window.location.href = `/pos/sale_items/${data.order_number}/`;
+    } else {
+        alert("❌ Error: " + data.message);
+    }
+});
+      },
+      prefill: {
+        name: "Customer Name",
+        email: "KiranaKart@example.com",
+        contact: "8320880414"
+      },
+      notes: {
+        order_id: orderNumber
+      },
+      theme: {
+        color: "#3399cc"
+      }
+    };
+
+    const rzp = new Razorpay(options);
+    rzp.open();
+
+  } else {
+    // Cash or Other payment
+    fetch("", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "X-CSRFToken": "{{ csrf_token }}"
+      },
+      body: new URLSearchParams({
+        cart: JSON.stringify(cartItems),
+        payment_mode: paymentMode,
+        order_number: orderNumber,
+        total_amount: totalAmount.toFixed(2)
+      })
+    })
+    .then(res => res.json())
+     .then(data => {
+    if (data.status === "warning") {
+        alert("✅ Order Placed! Order No: " + data.order_number);
+        // Redirect to sale_items page
+window.location.href = `/pos/sale_items/${data.order_number}/`;
+      } else {
+        alert("❌ Error: " + data.message);
+    }
+});
+  }
+}
+
+
+document.addEventListener("DOMContentLoaded", function () {
+  // Clear localStorage cart
+  localStorage.removeItem('cart');
+
+  // Clear rightList container (UI)
+  document.getElementById("rightList").innerHTML = "";
+
+  // Reset total
+  updateCartTotal();
+
+  // Generate new order number
+  document.getElementById("orderNumberDisplay").innerText = generateShortOrderNumber();
+});
+</script>
+
+{% endblock %}
